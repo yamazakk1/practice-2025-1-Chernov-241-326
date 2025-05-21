@@ -1,10 +1,50 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон | Мое участие</title>
+    <title>Киберполигон</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -18,46 +58,26 @@
                     <li><a href="participation.html" class="active">Моё участие</a></li>
                     <li><a href="blog.html">Журнал</a></li>
                     <li><a href="resources.html">Ресурсы</a></li>
+                    <li><a href="server.html">Pastebin-сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    <main>
         <section class="participation-section">
-            <h2>Моё участие в проекте</h2>
-            <div class="intro">
-                <p>Я работаю в команде backend-разработки. Мой путь в проекте:</p>
-            </div>
-
-            <div class="timeline">
-                <!-- Этап 1 -->
-                <div class="timeline-item">
-                    <h3>Февраль — Март 2024</h3>
-                    <ul>
-                        <li>Изучение основ Django: модели, шаблоны, ORM.</li>
-                        <li>Освоение Git для контроля версий.</li>
-                        <li>Работа с VirtualBox для развёртывания среды разработки.</li>
-                    </ul>
-                </div>
-                
-                <!-- Этап 2 -->
-                <div class="timeline-item">
-                    <h3>Апрель 2024</h3>
-                    <ul>
-                        <li>Переход в backend-команду проекта.</li>
-                        <li>Изучение архитектуры существующего кода.</li>
-                        <li>Доработка функционала на Django.</li>
-
-                    </ul>
-                </div>
-                
-                <!-- Этап 3 -->
-                <div class="timeline-item">
-                    <h3>Текущие задачи</h3>
-                    <ul>
-                        <li>Участие в планировании новых модулей платформы.</li>
-                    </ul>
+            <div class="container">
+                <h2>Моё участие</h2>
+                <div class="participation-content">
+                    <div class="participation-text">
+                        <p>В рамках проекта "Киберполигон" я занимался изучением фреймворка Django, разработкой функционала платформы и тестированием её компонентов.</p>
+                        <ul>
+                            <li>Изучил основы Django (модели, ORM, шаблоны) и выполнил практические задания по созданию моделей и маршрутов.</li>
+                            <li>Реализовал backend-логику для хранения данных пользователей и CTF-заданий.</li>
+                            <li>Проводил тестирование функционала, включая маршруты, шаблоны и задания CTF, исправлял найденные ошибки.</li>
+                            <li>Создал статический сайт для представления проекта с пятью страницами.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>

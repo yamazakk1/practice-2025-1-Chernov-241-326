@@ -1,0 +1,126 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Киберполигон</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Киберполигон</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="about.html">О проекте</a></li>
+                    <li><a href="participation.html">Моё участие</a></li>
+                    <li><a href="blog.html">Журнал</a></li>
+                    <li><a href="resources.html">Ресурсы</a></li>
+                    <li><a href="server.html" class="active">Pastebin-сервер</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-section">
+            <div class="container">
+                <h2>Pastebin-сервер</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>В рамках проектной практики я разработал pastebin-сервер — веб-приложение для обмена текстовыми данными. Сервер позволяет пользователям создавать текстовые пасты, делиться ими через уникальные ссылки и автоматически удаляет устаревшие записи. Это вариативное задание, выполненное на основе идей из <a href="https://github.com/codecrafters-io/build-your-own-x">codecrafters-io/build-your-own-x</a>.</p>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>Создание паст</h3>
+                        <p>Пользователи могут отправить текст через форму и выбрать срок действия: 1 час, 1 день или 1 неделя.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Просмотр паст</h3>
+                        <p>Каждая паста доступна по уникальному URL вида <code>/paste/&lt;slug&gt;</code>, с безопасным отображением текста.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Автоматическая очистка</h3>
+                        <p>Устаревшие пасты удаляются каждые 30 секунд с помощью фоновой задачи.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Консольное управление</h3>
+                        <p>Команды <code>stop</code> и <code>count</code> позволяют остановить сервер или узнать количество паст.</p>
+                    </div>
+                </div>
+
+                <div class="tech">
+                    <h3>Технологии</h3>
+                    <ul>
+                        <li><strong>Backend</strong>: Go (net/http), PostgreSQL (pgx/v5)</li>
+                        <li><strong>Инструменты</strong>: Git, Markdown, PlantUML</li>
+                    </ul>
+                </div>
+
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Как это работает?</h3>
+                        <p>Сервер обрабатывает HTTP-запросы (GET и POST), сохраняет пасты в PostgreSQL и использует горутины для периодической проверки сроков действия. Пользовательский интерфейс — минималистичный, с формой для создания паст и страницами для их просмотра. Консольные команды упрощают управление сервером.</p>
+                        <img src="../resources/screenshots/server_home.png" alt="Главная страница сервера" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
+                        <p>На главной странице доступна форма для создания пасты с выбором срока действия.</p>
+                        <img src="../resources/screenshots/paste_view.png" alt="Просмотр пасты" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
+                        <p>Паста отображается по уникальной ссылке, с экранированием HTML для безопасности.</p>
+                        <img src="../resources/diagrams/architecture.png" alt="Архитектура сервера" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
+                        <p>Архитектура сервера: обработка запросов, взаимодействие с PostgreSQL и фоновая очистка.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Киберполигон | Практика для будущих специалистов по веб-разработке</p>
+        </div>
+    </footer>
+</body>
+</html>

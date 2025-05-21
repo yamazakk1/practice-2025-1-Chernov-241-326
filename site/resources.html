@@ -1,10 +1,50 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон | Ресурсы</title>
+    <title>Киберполигон</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -18,55 +58,40 @@
                     <li><a href="participation.html">Моё участие</a></li>
                     <li><a href="blog.html">Журнал</a></li>
                     <li><a href="resources.html" class="active">Ресурсы</a></li>
+                    <li><a href="server.html">Pastebin-сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    <main>
         <section class="resources-section">
-            <h2>Ресурсы</h2>
-            
-            <!-- Университет -->
-            <div class="resource-item">
-                <h3>Московский Политех</h3>
-                <p>Официальный сайт университета-партнёра</p>
-                <a href="https://mospolytech.ru" target="_blank" rel="noopener noreferrer" class="btn">Перейти →</a>
-            </div>
-
-            <!-- Хабр -->
-            <div class="resource-item">
-                <h3>Сообщество InfoSec на Хабре</h3>
-                <p>Актуальные обсуждения по кибербезопасности</p>
-                <a href="https://habr.com/ru/hub/infosecurity/" target="_blank" rel="noopener noreferrer" class="btn">Читать →</a>
-            </div>
-
-            <!-- Гайд по кибербезопасности -->
-            <div class="resource-item">
-                <h3>Гайд по кибербезопасности</h3>
-                <p>Для разработчиков и начинающих специалистов</p>
-                <a href="https://skillbox.ru/media/code/gayd-po-kiberbezopasnosti-dlya-razrabotchikov-i-nachinayushchikh-spetsialistov/" target="_blank" rel="noopener noreferrer" class="btn">Изучить →</a>
-            </div>
-
-            <!-- Угрозы безопасности -->
-            <div class="resource-item">
-                <h3>Виды угроз информационной безопасности</h3>
-                <p>Актуальные киберугрозы и методы защиты</p>
-                <a href="https://selectel.ru/blog/security-threats/" target="_blank" rel="noopener noreferrer" class="btn">Анализ →</a>
-            </div>
-
-            <!-- CTF в России -->
-            <div class="resource-item">
-                <h3>CTF-соревнования в России</h3>
-                <p>Новости и анонсы турниров</p>
-                <a href="https://ctfnews.ru/" target="_blank" rel="noopener noreferrer" class="btn">Участвовать →</a>
+            <div class="container">
+                <h2>Ресурсы</h2>
+                <div class="resources-content">
+                    <div class="resource-item">
+                        <h3>Django Documentation</h3>
+                        <p>Официальная документация Django для изучения фреймворка.</p>
+                        <a href="https://docs.djangoproject.com/" target="_blank" class="btn">Перейти</a>
+                    </div>
+                    <div class="resource-item">
+                        <h3>MDN Web Docs</h3>
+                        <p>Руководства по HTML, CSS и веб-разработке.</p>
+                        <a href="https://developer.mozilla.org/" target="_blank" class="btn">Перейти</a>
+                    </div>
+                    <div class="resource-item">
+                        <h3>CTFtime</h3>
+                        <p>Платформа для практики CTF-заданий по кибербезопасности.</p>
+                        <a href="https://ctftime.org/" target="_blank" class="btn">Перейти</a>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>© 2025 Киберполигон | Проверенные ресурсы</p>
+            <p>© 2025 Киберполигон | Полезные материалы</p>
         </div>
     </footer>
 </body>

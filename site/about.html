@@ -1,10 +1,50 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон | О проекте</title>
+    <title>Киберполигон</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -18,60 +58,61 @@
                     <li><a href="participation.html">Моё участие</a></li>
                     <li><a href="blog.html">Журнал</a></li>
                     <li><a href="resources.html">Ресурсы</a></li>
+                    <li><a href="server.html">Pastebin-сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    <main>
         <section class="about-section">
-            <h2>О проекте</h2>
-            <div class="about-content">
-                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Кибербезопасность" class="about-image">
-                <div class="about-text">
-                    <p><strong>Киберполигон</strong> — это интерактивная образовательная платформа для тренировки навыков кибербезопасности. Мы создаем среду, где студенты и начинающие специалисты могут изучать реальные кейсы, отрабатывать атаки и защиту в безопасных условиях.</p>
+            <div class="container">
+                <h2>О проекте</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Киберполигон — это образовательная платформа, направленная на обучение кибербезопасности и веб-разработке. Проект создан для студентов, которые хотят освоить современные технологии и получить практический опыт.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="features">
-                <div class="feature-card">
-                    <h3>📚 Теория</h3>
-                    <p>Статьи, гайды и видео по основам криптографии, сетевой безопасности, анализу уязвимостей.</p>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>CTF-задания</h3>
+                        <p>Практические задачи по кибербезопасности в формате Capture The Flag.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Веб-разработка</h3>
+                        <p>Изучение Django, HTML, CSS и других технологий для создания веб-приложений.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Практика</h3>
+                        <p>Реальные проекты для портфолио и профессионального роста.</p>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <h3>🎯 Практика</h3>
-                    <p>Лабораторные работы и симуляторы (CTF-задачи, пентест, forensics).</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🎓 Сертификация</h3>
-                    <p>Возможность получить сертификаты после прохождения курсов.</p>
-                </div>
-            </div>
 
-            <div class="audience">
-                <h3>Для кого это?</h3>
-                <ul>
-                    <li><strong>Студенты IT-специальностей</strong> — подготовка к соревнованиям и стажировкам.</li>
-                    <li><strong>Начинающие пентестеры</strong> — от базовых до продвинутых техник взлома.</li>
-                    <li><strong>Преподаватели</strong> — готовая база материалов для занятий.</li>
-                </ul>
-            </div>
+                <div class="audience">
+                    <h3>Для кого это?</h3>
+                    <ul>
+                        <li>Студенты IT-направлений</li>
+                        <li>Начинающие разработчики</li>
+                        <li>Преподаватели и наставники</li>
+                    </ul>
+                </div>
 
-            <div class="tech">
-                <h3>Технологии проекта</h3>
-                <p>Платформа разрабатывается на:</p>
-                <ul>
-                    <li>Backend: Python (Django), SQLite</li>
-                    <li>Frontend: HTML/CSS/JS</li>
-                    <li>Инфраструктура: Vagrant</li>
-                </ul>
+                <div class="tech">
+                    <h3>Технологии проекта</h3>
+                    <ul>
+                        <li>Backend: Django, SQLite</li>
+                        <li>Frontend: HTML, CSS</li>
+                        <li>Инфраструктура: Vagrant, VirtualBox</li>
+                    </ul>
+                </div>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>© 2025 Киберполигон | Практика для будущих специалистов по кибербезопасности</p>
+            <p>© 2025 Киберполигон | Практика для будущих специалистов по веб-разработке</p>
         </div>
     </footer>
 </body>

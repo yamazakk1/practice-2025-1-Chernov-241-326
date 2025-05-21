@@ -1,10 +1,50 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон | Журнал</title>
+    <title>Киберполигон</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -18,47 +58,49 @@
                     <li><a href="participation.html">Моё участие</a></li>
                     <li><a href="blog.html" class="active">Журнал</a></li>
                     <li><a href="resources.html">Ресурсы</a></li>
+                    <li><a href="server.html">Pastebin-сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    <main>
         <section class="blog-section">
-            <h2>Журнал проекта</h2>
+            <div class="container">
+                <h2>Журнал проекта</h2>
+                <div class="blog-post">
+                    <h3>🚀 Начало работы над проектом</h3>
+                    <p class="date">10 февраля — 28 февраля 2025</p>
+                    <p>Проект начался с изучения Django и настройки окружения. Освоил базовые команды Git, настроил репозиторий и изучил основы ORM и шаблонов Django.</p>
+                    <ul>
+                        <li>Изучены команды Git: clone, commit, push.</li>
+                        <li>Создано тестовое Django-приложение.</li>
+                        <li>Настроена SQLite база данных.</li>
+                    </ul>
+                </div>
 
-            <!-- Запись 1 -->
-            <article class="blog-post">
-                <h3>🚀 Старт проекта и формирование команд</h3>
-                <p class="date">10 февраля — 17 марта 2024</p>
-                <p>Начало работы над "Киберполигоном". Первокурсники, включая меня, были распределены по командам. 
-                Основное внимание уделялось вводному обучению: освоение Django, работа с Git. 
-                К 18 марта успешно подготовлены первые учебные задачи для платформы.</p>
-            </article>
+                <div class="blog-post">
+                    <h3>🔍 Разработка и тестирование</h3>
+                    <p class="date">1 марта — 15 апреля 2025</p>
+                    <p>Реализовал модели и маршруты для платформы. Провёл тестирование функционала CTF-заданий и исправил ошибки в шаблонах.</p>
+                    <ul>
+                        <li>Созданы модели для пользователей и заданий.</li>
+                        <li>Протестированы маршруты и шаблоны.</li>
+                        <li>Исправлены баги в отображении страниц.</li>
+                    </ul>
+                </div>
 
-            <!-- Запись 2 -->
-            <article class="blog-post">
-                <h3>🔍 Работа с образовательным контентом</h3>
-                <p class="date">19 марта — 15 апреля 2024</p>
-                <p>После первой комиссии началась активная работа с материалами по кибербезопасности:</p>
-                <ul>
-                    <li>Добавление статей в базу данных с системой категоризации</li>
-                    <li>Оптимизация отображения контента на платформе</li>
-                    <li>Тестирование функционала для будущих CTF-заданий</li>
-                </ul>
-            </article>
-
-            <!-- Запись 3 -->
-            <article class="blog-post">
-                <h3>⚙️ Развитие платформы</h3>
-                <p class="date">16 апреля — настоящее время</p>
-                <p>Текущие улучшения системы:</p>
-                <ul>
-                    <li>Реализация новых моделей данных для хранения CTF-задач</li>
-                    <li>Доработка административной панели для удобства модерации</li>
-                    <li>Подготовка к интеграции системы проверки решений</li>
-                </ul>
-            </article>
+                <div class="blog-post">
+                    <h3>⚙️ Создание сайта и финализация</h3>
+                    <p class="date">15 апреля — 20 мая 2025</p>
+                    <p>Разработал статический сайт с пятью страницами. Добавил страницу о pastebin-сервере, написал документацию и подготовил отчёт.</p>
+                    <ul>
+                        <li>Создан сайт с адаптивным дизайном.</li>
+                        <li>Добавлена страница `server.html`.</li>
+                        <li>Подготовлена документация и UML-диаграммы.</li>
+                    </ul>
+                </div>
+            </div>
         </section>
     </main>
 
