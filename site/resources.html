@@ -42,10 +42,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Киберполигон - Ресурсы</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -58,40 +57,56 @@
                     <li><a href="participation.html">Моё участие</a></li>
                     <li><a href="blog.html">Журнал</a></li>
                     <li><a href="resources.html" class="active">Ресурсы</a></li>
-                    <li><a href="server.html">Pastebin-сервер</a></li>
+                    <li><a href="server.html">Сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main>
+    <div class="container">
         <section class="resources-section">
-            <div class="container">
-                <h2>Ресурсы</h2>
-                <div class="resources-content">
-                    <div class="resource-item">
-                        <h3>Django Documentation</h3>
-                        <p>Официальная документация Django для изучения фреймворка.</p>
-                        <a href="https://docs.djangoproject.com/" target="_blank" class="btn">Перейти</a>
+            <h2>Ресурсы</h2>
+
+            <div class="resource-category">
+                <h3>Обучающие материалы</h3>
+                <div class="resource-cards">
+                    <div class="resource-card">
+                        <h4>Московский Политех</h4>
+                        <p>Официальный сайт университета-партнёра</p>
+                        <a href="https://mospolytech.ru" class="btn">Перейти →</a>
                     </div>
-                    <div class="resource-item">
-                        <h3>MDN Web Docs</h3>
-                        <p>Руководства по HTML, CSS и веб-разработке.</p>
-                        <a href="https://developer.mozilla.org/" target="_blank" class="btn">Перейти</a>
+
+                    <div class="resource-card">
+                        <h4>Сообщество InfoSec на Хабре</h4>
+                        <p>Актуальные обсуждения по кибербезопасности</p>
+                        <a href="https://habr.com/ru/hubs/infosecurity/articles/" class="btn">Читать →</a>
                     </div>
-                    <div class="resource-item">
-                        <h3>CTFtime</h3>
-                        <p>Платформа для практики CTF-заданий по кибербезопасности.</p>
-                        <a href="https://ctftime.org/" target="_blank" class="btn">Перейти</a>
+
+                    <div class="resource-card">
+                        <h4>Гайд по кибербезопасности</h4>
+                        <p>Для разработчиков и начинающих специалистов</p>
+                        <a href="https://skillbox.ru/media/code/gayd-po-kiberbezopasnosti-dlya-razrabotchikov-i-nachinayushchikh-spetsialistov/" class="btn">Изучить →</a>
+                    </div>
+
+                    <div class="resource-card">
+                        <h4>Виды угроз информационной безопасности</h4>
+                        <p>Актуальные киберугрозы и методы защиты</p>
+                        <a href="https://selectel.ru/blog/security-threats/" class="btn">Анализ →</a>
+                    </div>
+
+                    <div class="resource-card">
+                        <h4>CTF-соревнования в России</h4>
+                        <p>Новости и анонсы турниров</p>
+                        <a href="https://ctftime.org" class="btn">Участвовать →</a>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
+    </div>
 
     <footer>
         <div class="container">
-            <p>© 2025 Киберполигон | Полезные материалы</p>
+            <p>© 2025 Киберполигон | Проверенные ресурсы</p>
         </div>
     </footer>
 </body>

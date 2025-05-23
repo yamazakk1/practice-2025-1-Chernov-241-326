@@ -42,10 +42,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Киберполигон</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Киберполигон - Сервер Pastebin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -58,69 +57,104 @@
                     <li><a href="participation.html">Моё участие</a></li>
                     <li><a href="blog.html">Журнал</a></li>
                     <li><a href="resources.html">Ресурсы</a></li>
-                    <li><a href="server.html" class="active">Pastebin-сервер</a></li>
+                    <li><a href="server.html" class="active">Сервер</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main>
-        <section class="about-section">
-            <div class="container">
-                <h2>Pastebin-сервер</h2>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p>В рамках проектной практики я разработал pastebin-сервер — веб-приложение для обмена текстовыми данными. Сервер позволяет пользователям создавать текстовые пасты, делиться ими через уникальные ссылки и автоматически удаляет устаревшие записи. Это вариативное задание, выполненное на основе идей из <a href="https://github.com/codecrafters-io/build-your-own-x">codecrafters-io/build-your-own-x</a>.</p>
+    <div class="container">
+        <section class="server-section">
+            <div class="server-content">
+                <div class="server-text">
+                    <h2>Pastebin-сервер</h2>
+                    <p>Я разработал pastebin-сервер в рамках проектной практики. Он позволяет пользователям сохранять текст (например, код или заметки) и получать уникальную ссылку для доступа.</p>
+                    <h3>Функционал сервера</h3>
+                    <div class="list-card">
+                        <ul>
+                            <li>Создание текстовых паст с выбором срока действия.</li>
+                            <li>Автоматическая очистка устаревших паст.</li>
+                            <li>Хранение данных в базе данных.</li>
+                            <li>Доступ к пастам через уникальные ссылки.</li>
+                        </ul>
                     </div>
-                </div>
-
-                <div class="features">
-                    <div class="feature-card">
-                        <h3>Создание паст</h3>
-                        <p>Пользователи могут отправить текст через форму и выбрать срок действия: 1 час, 1 день или 1 неделя.</p>
+                    <h3>Диаграммы</h3>
+                    <div class="diagram-section">
+                        <div class="diagram-item">
+                            <a href="../resources/diagrams/architecture.png" class="image-link">
+                                <img src="../resources/diagrams/architecture.png" alt="Архитектура системы">
+                            </a>
+                            <p>Архитектура системы</p>
+                        </div>
+                        <div class="diagram-item">
+                            <a href="../resources/diagrams/sequence_create.png" class="image-link">
+                                <img src="../resources/diagrams/sequence_create.png" alt="Последовательность создания пасты">
+                            </a>
+                            <p>Последовательность создания пасты</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <h3>Просмотр паст</h3>
-                        <p>Каждая паста доступна по уникальному URL вида <code>/paste/&lt;slug&gt;</code>, с безопасным отображением текста.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Автоматическая очистка</h3>
-                        <p>Устаревшие пасты удаляются каждые 30 секунд с помощью фоновой задачи.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Консольное управление</h3>
-                        <p>Команды <code>stop</code> и <code>count</code> позволяют остановить сервер или узнать количество паст.</p>
-                    </div>
-                </div>
-
-                <div class="tech">
-                    <h3>Технологии</h3>
-                    <ul>
-                        <li><strong>Backend</strong>: Go (net/http), PostgreSQL (pgx/v5)</li>
-                        <li><strong>Инструменты</strong>: Git, Markdown, PlantUML</li>
-                    </ul>
-                </div>
-
-                <div class="about-content">
-                    <div class="about-text">
-                        <h3>Как это работает?</h3>
-                        <p>Сервер обрабатывает HTTP-запросы (GET и POST), сохраняет пасты в PostgreSQL и использует горутины для периодической проверки сроков действия. Пользовательский интерфейс — минималистичный, с формой для создания паст и страницами для их просмотра. Консольные команды упрощают управление сервером.</p>
-                        <img src="../resources/screenshots/server_home.png" alt="Главная страница сервера" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
-                        <p>На главной странице доступна форма для создания пасты с выбором срока действия.</p>
-                        <img src="../resources/screenshots/paste_view.png" alt="Просмотр пасты" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
-                        <p>Паста отображается по уникальной ссылке, с экранированием HTML для безопасности.</p>
-                        <img src="../resources/diagrams/architecture.png" alt="Архитектура сервера" style="max-width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-top: 20px; display: block;">
-                        <p>Архитектура сервера: обработка запросов, взаимодействие с PostgreSQL и фоновая очистка.</p>
+                    <h3>Скриншоты работы сервера</h3>
+                    <div class="screenshot-section">
+                        <div class="screenshot-item">
+                            <a href="../resources/screenshots/server_home.png" class="image-link">
+                                <img src="../resources/screenshots/server_home.png" alt="Главная страница сервера">
+                            </a>
+                            <p>Главная страница сервера</p>
+                        </div>
+                        <div class="screenshot-item">
+                            <a href="../resources/screenshots/paste_view.png" class="image-link">
+                                <img src="../resources/screenshots/paste_view.png" alt="Просмотр пасты">
+                            </a>
+                            <p>Просмотр пасты</p>
+                        </div>
+                        <div class="screenshot-item">
+                            <a href="../resources/screenshots/console.png" class="image-link">
+                                <img src="../resources/screenshots/console.png" alt="Консольное управление">
+                            </a>
+                            <p>Консольное управление</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
+    </div>
+
+    <!-- Модальное окно для увеличения изображений -->
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
 
     <footer>
         <div class="container">
-            <p>© 2025 Киберполигон | Практика для будущих специалистов по веб-разработке</p>
+            <p>© 2025 Киберполигон | Практика для будущих специалистов по кибербезопасности</p>
         </div>
     </footer>
+
+    <script>
+        // JavaScript для модального окна
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-image");
+        var closeBtn = document.getElementsByClassName("close")[0];
+        var imageLinks = document.getElementsByClassName("image-link");
+
+        for (var i = 0; i < imageLinks.length; i++) {
+            imageLinks[i].onclick = function(event) {
+                event.preventDefault();
+                modal.style.display = "block";
+                modalImg.src = this.href;
+            }
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
